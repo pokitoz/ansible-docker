@@ -10,5 +10,7 @@ Get the list of IP in the network to connect to.
 
 Build the Ansible Docker
 -  `docker build -t test:latest .`
--  `docker run -it --rm -v $PWD:$PWD --workdir $PWD test:latest`
+-  `docker run -it --rm -v $PWD:$PWD --workdir $PWD -v ~/.ssh:/root/.ssh test:latest`
 
+
+ansible-playbook --inventory inventory.yml --diff playbook.yml
