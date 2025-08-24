@@ -42,4 +42,4 @@ jobs:
           -v ${{ github.workspace }}:/workspace \
           -v ~/.ssh:/root/.ssh \
           ghcr.io/${{ github.repository }}:ansible \
-          sh -c "cd ci-ansible && ansible-playbook --inventory inventory.yml --diff playbook.yml --private-key /root/.ssh/id_ed25519"
+          sh -c "cd ci-ansible && ansible-playbook --inventory inventory.yml --diff --private-key /root/.ssh/id_ed25519" playbook.yml
