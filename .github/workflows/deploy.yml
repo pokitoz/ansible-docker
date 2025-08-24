@@ -12,9 +12,8 @@ permissions:
 jobs:
   run-ansible:
     runs-on: dockerbuild
-    # Run all steps in this job inside the raspberry-pi-ansible container
     container:
-      image: ghcr.io/${{ github.repository }}/raspberry-pi-ansible:latest
+      image: ghcr.io/${{ github.repository }}/ansible-docker:ansible
       options: --workdir /workspace   # Default working dir in container
       volumes:
         - ${{ github.workspace }}:/workspace
