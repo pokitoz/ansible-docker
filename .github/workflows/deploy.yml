@@ -1,9 +1,10 @@
 name: Ansible Deployment
 
 on:
-  workflow_dispatch:   # Run manually from GitHub Actions UI
-  push:
-    branches: [main]   # Or trigger on push to main
+  workflow_run:
+    workflows: ["Build Docker Image"]
+    types:
+      - completed
 
 permissions:
   contents: read
