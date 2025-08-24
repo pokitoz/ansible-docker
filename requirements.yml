@@ -1,0 +1,11 @@
+---
+
+collections:
+  - name: ansible.posix
+    type: galaxy
+  - name: community.docker
+    type: galaxy
+  - name: community.general
+    type: galaxy
+
+...

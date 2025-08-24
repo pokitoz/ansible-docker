@@ -1,0 +1,17 @@
+FROM alpine:3.22.1
+COPY requirements.yml .
+
+RUN apk update && apk upgrade
+
+RUN apk add --no-cache \
+        python3 \
+        ansible \
+        black \
+        git \
+        openssh-client \
+        py-boto3 \
+        py-pip
+
+RUN ansible-galaxy collection install \
+        --collections-path /usr/share/ansible/collections \
+        --requirements-file requirements.yml
