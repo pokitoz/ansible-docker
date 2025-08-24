@@ -1,5 +1,9 @@
 name: Ansible Deployment
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_branch }}
+  cancel-in-progress: true
+
 on:
   workflow_run:
     workflows: ["Build Docker Image"]
@@ -17,6 +21,9 @@ jobs:
       options: --workdir /workspace   # Default working dir in container
       volumes:
         - ${{ github.workspace }}:/workspace
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       # Checkout repo (this happens outside, then files are mounted inside the container)
