@@ -2,14 +2,14 @@
 
 runners:
   hosts:
-    embedded-ta-001:
+    192.168.129.24:
   children:
     userubuntu:
       hosts:
-        embedded-ta-001:
+        192.168.129.24:
     # Host configuration
     devicerunners:
       hosts:
-        embedded-ta-001:
+        192.168.129.24:
 
 ...
