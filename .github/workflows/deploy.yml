@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull Ansible container
-        run: docker pull ghcr.io/${{ github.repository }}/ansible-docker:ansible
+        run: docker pull ghcr.io/${{ github.repository }}:ansible
 
       - name: Run Ansible in container with host network
         run: |
@@ -36,7 +36,7 @@ jobs:
             -v ${{ github.workspace }}:/workspace \
             -w /workspace \
             -e ANSIBLE_SSH_KEY="${{ secrets.ANSIBLE_SSH_KEY }}" \
-            ghcr.io/${{ github.repository }}/ansible-docker:ansible \
+            ghcr.io/${{ github.repository }}:ansible \
             bash -c "
               mkdir -p ~/.ssh
               echo \"\$ANSIBLE_SSH_KEY\" > ~/.ssh/id_ed25519
