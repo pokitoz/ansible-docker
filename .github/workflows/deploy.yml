@@ -29,17 +29,17 @@ jobs:
       - name: Pull Ansible container
         run: docker pull ghcr.io/${{ github.repository }}:ansible
 
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ID_ED25519_ANSIBLE }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
       - name: Run Ansible in container with host network
         run: |
-          docker run --rm \
-            --network host \
-            -v ${{ github.workspace }}:/workspace \
-            -w /workspace \
-            -e ANSIBLE_SSH_KEY="${{ secrets.ANSIBLE_SSH_KEY }}" \
-            ghcr.io/${{ github.repository }}:ansible \
-            bash -c "
-              mkdir -p ~/.ssh
-              echo \"\$ANSIBLE_SSH_KEY\" > ~/.ssh/id_ed25519
-              chmod 600 ~/.ssh/id_ed25519
-              ansible-playbook ci-ansible/inventory.yml --private-key ~/.ssh/id_ed25519 playbook.yml
-            "
+          docker run --network host \
+          --workdir /workspace \
+          -v ${{ github.workspace }}:/workspace \
+          -v ~/.ssh:/root/.ssh \
+          ghcr.io/${{ github.repository }}:ansible \
+          sh -c "cd ci-ansible && ansible-playbook --inventory inventory.yml --diff playbook.yml --private-key /root/.ssh/id_ed25519"
