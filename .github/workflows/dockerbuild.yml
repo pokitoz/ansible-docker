@@ -37,17 +37,25 @@ jobs:
 
       # Build and push Docker image for Raspberry Pi 4B
       - uses: docker/build-push-action@v6
-        id: docker_push
+        id: docker_push_rpi
         with:
           context: .
           file: ./Dockerfile
           push: true
           # Raspberry Pi 4B runs on 64-bit ARM (use arm64).
-          # You can also include amd64 if you want to test locally on your PC.
-          platforms: linux/arm64,linux/amd64
+          platforms: linux/arm64
           tags: |
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}:2
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}:latest
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}-rpi:latest
+
+      - uses: docker/build-push-action@v6
+        id: docker_push_ansible
+        with:
+          context: .
+          file: ./DockerfileAnsible
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}-ansible:latest
 
     outputs:
       digest: ${{ steps.docker_push.outputs.digest }}
