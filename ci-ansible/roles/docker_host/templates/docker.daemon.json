@@ -1,0 +1,31 @@
+{
+    "live-restore": true,
+    "userland-proxy": false,
+    "builder": {
+        "gc": {
+            "defaultKeepStorage": "5GB",
+            "enabled": true
+        }
+    },
+    "bip": "172.17.0.1/16",
+    "default-address-pools": [
+        {
+            "base": "172.18.0.0/16",
+            "size": 24
+        }
+      ],
+{% if docker_with_sysbox %}
+    "runtimes": {
+        "sysbox-runc": {
+            "path": "/usr/bin/sysbox-runc"
+        }
+    },
+{% if docker_default_sysbox_runtime %}
+    "default-runtime": "sysbox-runc",
+{% endif %}
+{% endif %}
+{% if docker_metrics_port %}
+    "metrics-addr" : "localhost:{{ docker_metrics_port }}",
+{% endif %}
+    "log-driver": "{{ docker_log_driver }}"
+}

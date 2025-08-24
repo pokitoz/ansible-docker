@@ -1,0 +1,9 @@
+---
+
+
+- name: Install pip python package dependencies
+  ansible.builtin.apt:
+    name:
+      - python3-serial
+
+...

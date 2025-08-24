@@ -1,0 +1,36 @@
+---
+
+# Get ride of the native docuum service and binary
+- name: Check for Docuum native service
+  ansible.builtin.stat:
+    path: /etc/systemd/system/docuum.service
+  register: docuum_service
+- name: Stop Docuum native service
+  ansible.builtin.include_tasks:
+    file: docuum-legacy-service.yml
+  when: docuum_service.stat.exists
+
+- name: Prune Docuum native binary
+  ansible.builtin.file:
+    path: /usr/local/bin/docuum
+    state: absent
+
+# Install docuum in a container
+
+- name: Docuum configuration folder
+  ansible.builtin.file:
+    path: "{{ docuum_configuration_path }}"
+    state: directory
+    mode: '0755'
+
+- name: Docuum docker compose file
+  ansible.builtin.template:
+    src: docuum-compose.yml
+    dest: "{{ docuum_configuration_path }}/compose.yml"
+    mode: '0644'
+
+- name: Docuum docker compose up
+  community.docker.docker_compose_v2:
+    project_src: "{{ docuum_configuration_path }}"
+  ignore_errors: '{{ ansible_check_mode }}'
+...

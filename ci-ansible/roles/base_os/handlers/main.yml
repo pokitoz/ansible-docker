@@ -1,0 +1,28 @@
+---
+################################################################################
+# Restart the systemd timesyncd daemon
+
+- name: Restart Timesyncd
+  listen: restart timesyncd
+  ansible.builtin.systemd:
+    name: systemd-timesyncd
+    enabled: true
+    state: restarted
+
+# Update OS certificates bundle
+- name: Update OS certificates
+  listen: update certificates
+  ansible.builtin.command:
+    cmd: update-ca-certificates
+  changed_when: true
+
+################################################################################
+# Restart the systemd journald daemon
+
+- name: Restart Journald
+  listen: restart journald
+  ansible.builtin.systemd:
+    name: systemd-journald
+    enabled: true
+    state: restarted
+...

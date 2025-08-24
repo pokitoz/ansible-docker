@@ -1,0 +1,9 @@
+---
+
+- name: Device runner configuration
+  hosts: all
+  roles:
+    - base_os
+    - docker_host
+    - device_ci
+...

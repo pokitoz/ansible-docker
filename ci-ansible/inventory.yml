@@ -1,0 +1,15 @@
+---
+
+runners:
+  hosts:
+    embedded-ta-001:
+  children:
+    userubuntu:
+      hosts:
+        embedded-ta-001:
+    # Host configuration
+    devicerunners:
+      hosts:
+        embedded-ta-001:
+
+...

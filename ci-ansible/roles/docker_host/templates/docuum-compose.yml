@@ -1,0 +1,26 @@
+# Docuum cleans up least recently used docker images.
+# See https://github.com/stepchowfun/docuum
+
+version: "3.9"
+services:
+  docuum:
+    image: '{{ docuum_image }}:{{ docuum_version }}'
+    container_name: docuum
+    init: true
+    mem_limit: "64M"
+    command: ['--threshold', '{{ docuum_threshold }}']
+    restart: always
+    runtime: runc
+    network_mode: none
+    environment:
+      LOG_LEVEL: '{{ docuum_log_level }}'
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: volume
+        source: data
+        target: /root/.local/share/docuum
+
+volumes:
+  data:

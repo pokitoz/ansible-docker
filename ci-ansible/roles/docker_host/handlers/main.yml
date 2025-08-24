@@ -1,0 +1,26 @@
+---
+
+################################################################################
+# Restart the docker daemon
+
+- name: Restart Docker
+  listen: restart docker
+  ansible.builtin.systemd:
+    name: docker
+    enabled: true
+    state: restarted
+    daemon_reload: true
+  ignore_errors: '{{ ansible_check_mode }}'
+
+################################################################################
+# Restart the docuum daemon
+
+- name: Restart Docuum
+  listen: restart docuum
+  ansible.builtin.systemd:
+    name: docuum
+    enabled: true
+    state: restarted
+    daemon_reload: true
+  ignore_errors: '{{ ansible_check_mode }}'
+...

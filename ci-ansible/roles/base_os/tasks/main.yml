@@ -1,0 +1,67 @@
+---
+
+################################################################################
+# Host name
+
+- name: Host name
+  ansible.builtin.hostname:
+    name: "{{ tags.Hostname | default(inventory_hostname_short) }}"
+  tags: [base-os, hostname]
+
+################################################################################
+# Time zone
+
+- name: Time zone
+  community.general.timezone:
+    name: "{{ timezone }}"
+  tags: base-os
+
+################################################################################
+# NTP server
+
+- name: NTP server
+  community.general.ini_file:
+    dest: /etc/systemd/timesyncd.conf
+    section: 'Time'
+    option: 'NTP'
+    value: "{{ ntp_server }}"
+    mode: '0644'
+  when: ntp_server | default(None) != None
+  notify: restart timesyncd
+  tags: [base-os, ntp]
+
+################################################################################
+# Configure Journald to limit the log size on disk
+
+- name: Journald configuration directory
+  ansible.builtin.file:
+    path: /etc/systemd/journald.conf.d
+    state: directory
+    mode: '0755'
+  tags: [base-os, journald]
+
+- name: Configure Journald max size
+  ansible.builtin.template:
+    src: journal-size.conf
+    dest: /etc/systemd/journald.conf.d/00-journal-size.conf
+    mode: '0644'
+  notify: restart journald
+  tags: [base-os, journald]
+
+################################################################################
+# Apt clean up
+
+# Add --extra-vars "apt_dist_upgrade=true" to the ansible command line to
+# activate this task
+- name: Package upgrade
+  ansible.builtin.apt:
+    upgrade: dist
+  when: apt_dist_upgrade | bool
+  tags: [base-os, apt]
+
+- name: Package clean up
+  ansible.builtin.apt:
+    autoclean: true
+    autoremove: true
+  tags: [base-os, apt]
+...

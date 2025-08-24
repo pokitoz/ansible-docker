@@ -1,0 +1,116 @@
+---
+
+################################################################################
+
+- name: Sysbox runtime
+  tags: docker
+  when: docker_with_sysbox
+  ansible.builtin.include_tasks:
+    file: sysbox.yml
+    apply:
+      tags: docker
+
+################################################################################
+# Install the docker apt repository, and install and configures docker-ce
+
+- name: Apt repository and install
+  tags: docker
+  block:
+    - name: Apt gpg Key
+      ansible.builtin.get_url:
+        url: "{{ docker_apt_base_url }}/gpg"
+        dest: "{{ docker_apt_key }}"
+        mode: '0644'
+
+    - name: Apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [ signed-by={{ docker_apt_key }}] {{ docker_apt_base_url }} {{ ansible_distribution_release }} stable"
+        filename: docker
+        state: present
+
+    - name: Docker packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+      ignore_errors: '{{ ansible_check_mode }}'
+      loop:
+        - docker-ce
+        - docker-compose-plugin
+
+- name: Configuration
+  ansible.builtin.template:
+    src: docker.daemon.json
+    dest: /etc/docker/daemon.json
+    mode: '0644'
+  notify: restart docker
+  tags: docker
+
+- name: Access for the user {{ default_user }}
+  ansible.builtin.user:
+    append: true
+    user: "{{ default_user }}"
+    groups: docker
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: docker
+
+- name: Handle docker config changes
+  ansible.builtin.meta: flush_handlers
+
+################################################################################
+# Install python package to control docker (e.g. from ansible)
+
+- name: Pip3 package
+  ansible.builtin.apt:
+    cache_valid_time: 3600
+    install_recommends: false
+    package:
+      - python3-pip
+    state: present
+    autoremove: true
+    autoclean: true
+  tags: docker
+
+- name: Docker python package
+  ansible.builtin.apt:
+    name:
+      - "{{ item.name }}"
+    state: present
+  loop:
+    - name: python3-docker
+    - name: docker-compose
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: docker
+
+################################################################################
+# Install and configure docuum
+- name: Docuum
+  when: docker_with_docuum
+  ansible.builtin.include_tasks:
+    file: docuum.yml
+    apply:
+      tags: [docker, docuum]
+  tags: [docker, docuum]
+
+################################################################################
+# Allow access to docker images stored in our private registry
+
+- name: Log into private registry and force re-authorization
+  community.docker.docker_login:
+    registry_url: '{{ docker_registry }}'
+    username: '{{ docker_username }}'
+    password: '{{ docker_password }}'
+    reauthorize: true
+  when: docker_registry is defined
+  ignore_errors: '{{ ansible_check_mode }}'
+  tags: docker
+
+################################################################################
+# Preload specific docker images
+
+- name: Preload docker images
+  community.docker.docker_image:
+    name: '{{ item }}'
+    source: pull
+    force_source: true
+  loop: '{{ docker_images }}'
+  tags: docker
+...

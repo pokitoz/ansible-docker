@@ -1,0 +1,35 @@
+---
+
+# APT repository signing key
+docker_apt_key: /etc/apt/trusted.gpg.d/docker.asc
+
+docker_metrics_port:
+docker_log_driver: local
+
+# Docker images to preload/pull
+docker_images: []
+
+# Sysbox runtime
+docker_with_sysbox: false
+docker_default_sysbox_runtime: false
+
+# Multi arch support
+docker_with_qemu_multi_arch: false
+
+# Install docuum in a container
+# see https://github.com/stepchowfun/docuum
+docker_with_docuum: true
+
+# Docuum configuration folder
+docuum_configuration_path: /opt/docuum
+
+# Docuum image version to install
+docuum_image: stephanmisc/docuum
+docuum_version: "0.23.1"
+
+# Total size of docker images to keep
+docuum_threshold: "10GB"
+
+# Documm verbosity
+docuum_log_level: "info"
+...

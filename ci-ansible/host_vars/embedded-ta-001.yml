@@ -1,0 +1,6 @@
+---
+
+# Configuration variables
+ansible_user: embedded-ta-001
+default_user: embedded-ta-001
+...

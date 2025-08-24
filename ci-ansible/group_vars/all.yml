@@ -1,0 +1,26 @@
+---
+
+# Configuration variables
+ansible_become: yes
+ansible_become_method: sudo
+
+# Set timezone
+timezone: Europe/Zurich
+
+# Set NTP server
+ntp_server: time.hq.k.grp
+
+# Journald maximum size on disk
+journald_size: 512M
+
+# Docuum configuration
+docuum_threshold: "12GB"
+# docuum_log_level: "info" # Default is already info
+
+# Gitlab runner configuration
+agent_check_interval: "2"
+agent_core_dump: true
+agent_web_terminal: false
+agent_systemd_stop_timeout: "3600"
+
+...

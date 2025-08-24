@@ -1,0 +1,22 @@
+---
+
+# Default timezone
+timezone: Etc/UTC
+
+# Journald maximum size on disk
+journald_size: 256M
+
+# Ubuntu's default user
+default_user: ubuntu
+
+# Users for which to add keys (fetched from gitlab)
+ssh_users_keys: []
+# Users for which to remove keys
+old_ssh_users_keys: []
+
+# CA Certificates to install
+#ca_certificates:
+#  - url to ca
+
+apt_dist_upgrade: false
+...
