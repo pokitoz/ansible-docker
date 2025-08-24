@@ -51,8 +51,6 @@ jobs:
           # Raspberry Pi 4B runs on 64-bit ARM (use arm64).
           platforms: linux/arm64
           tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}:rpi
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - uses: docker/build-push-action@v6
         id: docker_push_ansible
