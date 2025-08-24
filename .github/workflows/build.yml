@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: docker-build-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: write
@@ -27,6 +31,8 @@ jobs:
 
       # Enable Buildx for multi-arch Docker builds
       - uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker
 
       # Authenticate to GitHub Container Registry
       - uses: docker/login-action@v3
@@ -44,8 +50,9 @@ jobs:
           push: true
           # Raspberry Pi 4B runs on 64-bit ARM (use arm64).
           platforms: linux/arm64
-          tags: |
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}:rpi
+          tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}:rpi
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - uses: docker/build-push-action@v6
         id: docker_push_ansible
@@ -54,8 +61,7 @@ jobs:
           file: ./DockerfileAnsible
           push: true
           platforms: linux/amd64
-          tags: |
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}:ansible
+          tags: ghcr.io/${{ env.IMAGE_REPOSITORY }}:ansible
 
     outputs:
       digest: ${{ steps.docker_push.outputs.digest }}
