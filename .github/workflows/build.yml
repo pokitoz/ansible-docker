@@ -45,7 +45,7 @@ jobs:
           # Raspberry Pi 4B runs on 64-bit ARM (use arm64).
           platforms: linux/arm64
           tags: |
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}-rpi:latest
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}:rpi
 
       - uses: docker/build-push-action@v6
         id: docker_push_ansible
@@ -55,7 +55,7 @@ jobs:
           push: true
           platforms: linux/amd64
           tags: |
-            ghcr.io/${{ env.IMAGE_REPOSITORY }}-ansible:latest
+            ghcr.io/${{ env.IMAGE_REPOSITORY }}:ansible
 
     outputs:
       digest: ${{ steps.docker_push.outputs.digest }}
