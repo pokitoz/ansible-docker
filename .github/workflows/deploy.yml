@@ -24,8 +24,13 @@ jobs:
         - ${{ github.workspace }}:/workspace
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ID_ED25519_ANSIBLE }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
 
+      - uses: actions/checkout@v4
       - name: Run Ansible Playbook
         run: |
           cd ci-ansible
