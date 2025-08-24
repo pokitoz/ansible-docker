@@ -15,23 +15,24 @@ permissions:
 
 jobs:
   run-ansible:
-    # if you don't have a self-hosted runner named "dockerbuild", use ubuntu-latest
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/${{ github.repository }}:ansible
-      options: --workdir /workspace
-      volumes:
-        - ${{ github.workspace }}:/workspace
-      
+    runs-on: self-hosted   # must be your LAN host
     steps:
-      - name: Setup SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.ID_ED25519_ANSIBLE }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-
       - uses: actions/checkout@v4
-      - name: Run Ansible Playbook
+
+      - name: Pull Ansible container
+        run: docker pull ghcr.io/${{ github.repository }}/ansible-docker:ansible
+
+      - name: Run Ansible in container with host network
         run: |
-          cd ci-ansible
-          ansible-playbook --inventory inventory.yml --diff playbook.yml --private-key ~/.ssh/id_ed25519
+          docker run --rm \
+            --network host \
+            -v ${{ github.workspace }}:/workspace \
+            -w /workspace \
+            -e ANSIBLE_SSH_KEY="${{ secrets.ANSIBLE_SSH_KEY }}" \
+            ghcr.io/${{ github.repository }}/ansible-docker:ansible \
+            bash -c "
+              mkdir -p ~/.ssh
+              echo \"\$ANSIBLE_SSH_KEY\" > ~/.ssh/id_ed25519
+              chmod 600 ~/.ssh/id_ed25519
+              ansible-playbook ci-ansible/inventory.yml --private-key ~/.ssh/id_ed25519 playbook.yml
+            "
