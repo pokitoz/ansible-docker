@@ -22,16 +22,18 @@ jobs:
       options: --workdir /workspace
       volumes:
         - ${{ github.workspace }}:/workspace
-
+    env:
+      PRIVATE_KEY_NAME: ~/.ssh/id_ed25519
+      
     steps:
       - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.ID_ED25519_ANSIBLE }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.ID_ED25519_ANSIBLE }}" > $PRIVATE_KEY_NAME
+          chmod 600 $PRIVATE_KEY_NAME
 
       - uses: actions/checkout@v4
       - name: Run Ansible Playbook
         run: |
           cd ci-ansible
-          ansible-playbook --inventory inventory.yml --diff playbook.yml
+          ansible-playbook --inventory inventory.yml --diff playbook.yml --private-key $PRIVATE_KEY_NAME
