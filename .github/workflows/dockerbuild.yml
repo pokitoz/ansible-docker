@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   build-docker-image:
-    runs-on: ubuntu-latest
+    runs-on: builddocker
     steps:
       # Prepare IMAGE_REPOSITORY from repo name (lowercased)
       - name: Prepare Registry Names
