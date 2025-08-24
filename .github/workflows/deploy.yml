@@ -7,29 +7,26 @@ concurrency:
 on:
   workflow_run:
     workflows: ["Build Docker Image"]
-    types:
-      - completed
+    types: [completed]
 
 permissions:
   contents: read
+  packages: read   # allow pulling job container from GHCR
 
 jobs:
   run-ansible:
-    runs-on: dockerbuild
+    # if you don't have a self-hosted runner named "dockerbuild", use ubuntu-latest
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/${{ github.repository }}/ansible-docker:ansible
-      options: --workdir /workspace   # Default working dir in container
+      options: --workdir /workspace
       volumes:
         - ${{ github.workspace }}:/workspace
-      credentials:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      # Checkout repo (this happens outside, then files are mounted inside the container)
       - uses: actions/checkout@v4
 
-      # Run ansible-playbook (inside the container)
       - name: Run Ansible Playbook
         run: |
-          cd  ci-ansible && ansible-playbook --inventory inventory.yml --diff playbook.yml
+          cd ci-ansible
+          ansible-playbook --inventory inventory.yml --diff playbook.yml
