@@ -1,0 +1,28 @@
+name: Ansible Deployment
+
+on:
+  workflow_dispatch:   # Run manually from GitHub Actions UI
+  push:
+    branches: [main]   # Or trigger on push to main
+
+permissions:
+  contents: read
+
+jobs:
+  run-ansible:
+    runs-on: dockerbuild
+    # Run all steps in this job inside the raspberry-pi-ansible container
+    container:
+      image: ghcr.io/${{ github.repository }}/raspberry-pi-ansible:latest
+      options: --workdir /workspace   # Default working dir in container
+      volumes:
+        - ${{ github.workspace }}:/workspace
+
+    steps:
+      # Checkout repo (this happens outside, then files are mounted inside the container)
+      - uses: actions/checkout@v4
+
+      # Run ansible-playbook (inside the container)
+      - name: Run Ansible Playbook
+        run: |
+          cd  ci-ansible && ansible-playbook --inventory inventory.yml --diff playbook.yml
