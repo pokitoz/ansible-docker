@@ -9,8 +9,8 @@ nmap -sP 192.168.129.0/24
 Get the list of IP in the network to connect to.
 
 Build the Ansible Docker
--  `docker build -t test:latest .`
+-  `docker build -t test:latest -f Dockerfile .`
 -  `docker run -it --rm -v $PWD:$PWD --workdir $PWD -v ~/.ssh:/root/.ssh test:latest`
 
 
-ansible-playbook --inventory inventory.yml --diff playbook.yml
+`ansible-playbook --inventory inventory.yml --diff playbook.yml`
