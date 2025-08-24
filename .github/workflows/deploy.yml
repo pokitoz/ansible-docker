@@ -18,7 +18,7 @@ jobs:
     # if you don't have a self-hosted runner named "dockerbuild", use ubuntu-latest
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/ansible-docker:ansible
+      image: ghcr.io/${{ github.repository }}:ansible
       options: --workdir /workspace
       volumes:
         - ${{ github.workspace }}:/workspace
