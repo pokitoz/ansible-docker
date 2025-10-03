@@ -8,7 +8,7 @@ ansible_become_method: sudo
 timezone: Europe/Zurich
 
 # Set NTP server
-ntp_server: time.hq.k.grp
+ntp_server: ntppool.org
 
 # Journald maximum size on disk
 journald_size: 512M
